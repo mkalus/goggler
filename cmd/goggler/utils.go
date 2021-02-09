@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/mkalus/goggler/cache"
+	"github.com/mkalus/goggler/cache/local"
 	"github.com/mkalus/goggler/screenshot"
 	"log"
 	"os"
@@ -22,6 +24,8 @@ var listenAddress = ":8080"
 
 // debug service?
 var Debug = false
+
+var MyCache cache.Cache
 
 // collect settings from environment and set them
 func defineSettingsFromEnvironment() {
@@ -52,6 +56,29 @@ func defineSettingsFromEnvironment() {
 			defaultSettings.Timeout,
 		)
 	}
+
+	// init cache
+	c := os.Getenv("GOGGLER_CACHE")
+	var err error
+	switch c {
+	// TODO: add more caches
+	default:
+		// fallback to local cache
+		p := os.Getenv("GOGGLER_CACHE_LOCAL_PATH")
+		if p == "" {
+			p = "/tmp"
+		}
+		MyCache, err = local.InitLocalCache(p, Debug)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if Debug {
+			log.Printf("Cache: local, path= %s", p)
+		}
+	}
+
+	// TODO: start cache cleaning, max age, etc.
 }
 
 // helper function to parse query string values to positive int

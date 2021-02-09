@@ -47,7 +47,19 @@ func main() {
 			return
 		}
 
-		// TODO: check cache for existing file
+		// get existing file
+		data, err := MyCache.Get(settings.Hash)
+		if err == nil && data != nil && len(data) > 0 {
+			// get time passed
+			duration := time.Since(start)
+
+			// return image
+			log.Printf("200: HIT %s %s", duration, settings.Url)
+			w.Header().Set("Content-Type", "image/png")
+			_, _ = w.Write(data)
+
+			return
+		}
 
 		// create screenshot and return it
 		image, err := screenshot.CreateScreenShot(settings)
@@ -60,6 +72,12 @@ func main() {
 			}
 
 			return
+		}
+
+		// save to cache
+		err = MyCache.Save(settings.Hash, image)
+		if err != nil {
+			log.Printf("Error caching image: %s", err)
 		}
 
 		// get time passed

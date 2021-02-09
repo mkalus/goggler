@@ -43,6 +43,8 @@ Changes defaults and sets some other elements:
 * `GOGGLER_TIMEOUT` Set default timeout time
 * `GOGGLER_LISTEN` Set default listen address (default: `:8080`)
 * `GOGGLER_DEBUG` Enable debugging log
+* `GOGGLER_CACHE` Type of cache (`local` or `s3`, default `local`)
+* `GOGGLER_CACHE_LOCAL_PATH` Path to local cache (default `/tmp`)
 
 Example:
 
