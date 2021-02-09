@@ -4,16 +4,51 @@ Website screenshot microservice written in Golang that caches screenshots on dis
 
 ## Compiling and Running
 
-Compile with:
+Compile and run with:
 
 ```bash
 go build github.com/mkalus/goggler/cmd/goggler
+
+./goggler
 ```
 
 Point your Browser to the URL: `http://localhost:8080/?url=https%3A%2F%2Fduckduckgo.com%2F&wait=2000`
 
 **Note:** Googler uses ChromeDP and needs Chrome or Chromium to work. This means it has to be able to
 access and start Chrome or Chromium somehow (Chrome in path variable or the like).
+
+## Parameters
+
+Valid URI parameters:
+
+* `url` URL to take screenshot from (required)
+* `width` Width of image and viewport (might be scaled up or down, see below, default: 1920)
+* `height` Height of image and viewport (might be scaled up or down, see below, default: 1024)
+* `scale` Scale of image and viewport (final width and height are multiplied by this, default: 0.2)
+* `quality` PNG image quality (default: 90)
+* `wait` Time in ms to wait until screenshot is taken (to wait for rendering to finish, default: 2000)
+* `timeout` Timeout in ms after which request is cancelled (default: 60000)
+
+Defaults may be changed by setting environmental variables when running goggle.
+
+## Environmental variables
+
+Changes defaults and sets some other elements:
+
+* `GOGGLER_WIDTH` Set default image width
+* `GOGGLER_HEIGHT` Set default image height
+* `GOGGLER_SCALE` Set default image scale
+* `GOGGLER_QUALITY` Set default image quality
+* `GOGGLER_WAIT` Set default wait time
+* `GOGGLER_TIMEOUT` Set default timeout time
+* `GOGGLER_LISTEN` Set default listen address (default: `:8080`)
+* `GOGGLER_DEBUG` Enable debugging log
+
+Example:
+
+```bash
+GOGGLER_DEBUG=1 GOGGLER_LISTEN=127.0.0.1:9090 ./goggler
+```
 
 ## Docker
 
