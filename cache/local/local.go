@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 type LocalCache struct {
@@ -13,6 +14,7 @@ type LocalCache struct {
 	path  string
 }
 
+// save to cache
 func (c LocalCache) Save(hash string, data []byte) error {
 	// Create file path
 	file := filepath.Join(c.path, hash+".png")
@@ -45,14 +47,29 @@ func (c LocalCache) Save(hash string, data []byte) error {
 	return nil
 }
 
-func (c LocalCache) Get(hash string) ([]byte, error) {
+// get file from cache
+func (c LocalCache) Get(hash string, maxAge int) ([]byte, error) {
 	// Create file path
 	file := filepath.Join(c.path, hash+".png")
 
 	// Check file existence
-	_, err := os.Stat(file)
+	stat, err := os.Stat(file)
 	if os.IsNotExist(err) {
 		return nil, nil // cache miss without error
+	}
+
+	// Check last modification date
+	if maxAge > 0 && time.Duration(maxAge)*time.Second < time.Now().Sub(stat.ModTime()) {
+		if c.debug {
+			log.Printf("Stale file %s - renewing", file)
+		}
+
+		err = c.Delete(hash)
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, nil
 	}
 
 	if c.debug {
@@ -71,6 +88,13 @@ func (c LocalCache) Get(hash string) ([]byte, error) {
 	return data, nil
 }
 
+// delete file in cache
+func (c LocalCache) Delete(hash string) error {
+	// TODO
+	return nil
+}
+
+// init local cache and populate with data
 func InitLocalCache(path string, debug bool) (*LocalCache, error) {
 	cache := &LocalCache{}
 

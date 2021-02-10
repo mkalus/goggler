@@ -17,6 +17,7 @@ var defaultSettings = screenshot.Settings{
 	Wait:    2000,
 	Timeout: 60000,
 	Quality: 90,
+	MaxAge:  2592000,
 }
 
 // listen address for server
@@ -29,12 +30,13 @@ var MyCache cache.Cache
 
 // collect settings from environment and set them
 func defineSettingsFromEnvironment() {
-	defaultSettings.Width = getPositiveIntegerFromString(os.Getenv("GOGGLER_WIDTH"), defaultSettings.Width, "GOGGLER_WIDTH")
-	defaultSettings.Height = getPositiveIntegerFromString(os.Getenv("GOGGLER_HEIGHT"), defaultSettings.Height, "GOGGLER_HEIGHT")
+	defaultSettings.Width = getPositiveIntegerFromString(os.Getenv("GOGGLER_WIDTH"), defaultSettings.Width, "GOGGLER_WIDTH", false)
+	defaultSettings.Height = getPositiveIntegerFromString(os.Getenv("GOGGLER_HEIGHT"), defaultSettings.Height, "GOGGLER_HEIGHT", false)
 	defaultSettings.Scale = getPositiveFloatFromString(os.Getenv("GOGGLER_SCALE"), defaultSettings.Scale, "GOGGLER_SCALE")
-	defaultSettings.Wait = getPositiveIntegerFromString(os.Getenv("GOGGLER_WAIT"), defaultSettings.Wait, "GOGGLER_WAIT")
-	defaultSettings.Timeout = getPositiveIntegerFromString(os.Getenv("GOGGLER_TIMEOUT"), defaultSettings.Timeout, "GOGGLER_TIMEOUT")
-	defaultSettings.Quality = getPositiveIntegerFromString(os.Getenv("GOGGLER_QUALITY"), defaultSettings.Quality, "GOGGLER_QUALITY")
+	defaultSettings.Wait = getPositiveIntegerFromString(os.Getenv("GOGGLER_WAIT"), defaultSettings.Wait, "GOGGLER_WAIT", false)
+	defaultSettings.Timeout = getPositiveIntegerFromString(os.Getenv("GOGGLER_TIMEOUT"), defaultSettings.Timeout, "GOGGLER_TIMEOUT", false)
+	defaultSettings.Quality = getPositiveIntegerFromString(os.Getenv("GOGGLER_QUALITY"), defaultSettings.Quality, "GOGGLER_QUALITY", false)
+	defaultSettings.MaxAge = getPositiveIntegerFromString(os.Getenv("GOGGLER_MAXAGE"), defaultSettings.MaxAge, "GOGGLER_MAXAGE", true)
 
 	a := os.Getenv("GOGGLER_LISTEN")
 	if a != "" {
@@ -82,14 +84,14 @@ func defineSettingsFromEnvironment() {
 }
 
 // helper function to parse query string values to positive int
-func getPositiveIntegerFromString(n string, defaultValue int, fieldName string) int {
+func getPositiveIntegerFromString(n string, defaultValue int, fieldName string, zeroAllowed bool) int {
 	// empty value? return default
 	if n == "" {
 		return defaultValue
 	}
 
 	i, err := strconv.Atoi(n)
-	if err != nil || i <= 0 {
+	if err != nil || i < 0 || (i == 0 && !zeroAllowed) {
 		log.Printf("can't convert field %s (value %s) - not a positive integer (falling back to default value)", fieldName, n)
 		return defaultValue
 	}

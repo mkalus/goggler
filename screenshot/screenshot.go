@@ -19,6 +19,7 @@ type Settings struct {
 	Timeout int     // ms to wait before returning timeout (default 60000, 60 seconds)
 	Quality int     // png quality
 	Hash    string  // file hash for this setting to quickly find cached files
+	MaxAge  int     // maximum age of cache file in seconds (!) before it gets reloaded (set to 0 to never renew files, default 2592000 = 30 days)
 }
 
 // entry point to create screenshot

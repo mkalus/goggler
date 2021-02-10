@@ -48,7 +48,7 @@ func main() {
 		}
 
 		// get existing file
-		data, err := MyCache.Get(settings.Hash)
+		data, err := MyCache.Get(settings.Hash, settings.MaxAge)
 		if err == nil && data != nil && len(data) > 0 {
 			// get time passed
 			duration := time.Since(start)
@@ -109,12 +109,13 @@ func parseQuery(r *url.URL) screenshot.Settings {
 
 	settings := screenshot.Settings{
 		Url:     q.Get("url"),
-		Width:   getPositiveIntegerFromString(q.Get("width"), defaultSettings.Width, "width"),
-		Height:  getPositiveIntegerFromString(q.Get("height"), defaultSettings.Height, "height"),
-		Quality: getPositiveIntegerFromString(q.Get("quality"), defaultSettings.Quality, "quality"),
+		Width:   getPositiveIntegerFromString(q.Get("width"), defaultSettings.Width, "width", false),
+		Height:  getPositiveIntegerFromString(q.Get("height"), defaultSettings.Height, "height", false),
+		Quality: getPositiveIntegerFromString(q.Get("quality"), defaultSettings.Quality, "quality", false),
 		Scale:   getPositiveFloatFromString(q.Get("scale"), defaultSettings.Scale, "scale"),
-		Wait:    getPositiveIntegerFromString(q.Get("wait"), defaultSettings.Wait, "wait"),
-		Timeout: getPositiveIntegerFromString(q.Get("timeout"), defaultSettings.Timeout, "timeout"),
+		Wait:    getPositiveIntegerFromString(q.Get("wait"), defaultSettings.Wait, "wait", false),
+		Timeout: getPositiveIntegerFromString(q.Get("timeout"), defaultSettings.Timeout, "timeout", false),
+		MaxAge:  getPositiveIntegerFromString(q.Get("maxage"), defaultSettings.MaxAge, "maxage", true),
 	}
 
 	// create file hash
