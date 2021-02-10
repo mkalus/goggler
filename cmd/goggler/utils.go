@@ -66,7 +66,7 @@ func defineSettingsFromEnvironment() {
 		// fallback to local cache
 		p := os.Getenv("GOGGLER_CACHE_LOCAL_PATH")
 		if p == "" {
-			p = "/tmp"
+			p = os.TempDir()
 		}
 		MyCache, err = local.InitLocalCache(p, Debug)
 		if err != nil {

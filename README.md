@@ -7,9 +7,7 @@ Website screenshot microservice written in Golang that caches screenshots on dis
 Compile and run with:
 
 ```bash
-go build github.com/mkalus/goggler/cmd/goggler
-
-./goggler
+go build github.com/mkalus/goggler/cmd/goggler && GOGGLER_DEBUG=1 ./goggler
 ```
 
 Point your Browser to the URL: `http://localhost:8080/?url=https%3A%2F%2Fduckduckgo.com%2F&wait=2000`
@@ -44,7 +42,7 @@ Changes defaults and sets some other elements:
 * `GOGGLER_LISTEN` Set default listen address (default: `:8080`)
 * `GOGGLER_DEBUG` Enable debugging log
 * `GOGGLER_CACHE` Type of cache (`local` or `s3`, default `local`)
-* `GOGGLER_CACHE_LOCAL_PATH` Path to local cache (default `/tmp`)
+* `GOGGLER_CACHE_LOCAL_PATH` Path to local cache (default: OS specific temp dir like `/tmp`)
 
 Example:
 
