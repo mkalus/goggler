@@ -26,7 +26,7 @@ Valid URI parameters:
 * `quality` PNG image quality (default: 90)
 * `wait` Time in ms to wait until screenshot is taken (to wait for rendering to finish, default: 2000 =  2 secs)
 * `timeout` Timeout in ms after which request is cancelled (default: 60000 = 60 secs)
-* `maxeage` Maximum age of cache file in seconds (!) before it gets reloaded (set to 0 to never renew files, default: 2592000 = 30 days)
+* `maxage` Maximum age of cache file in seconds (!) before it gets reloaded (set to 0 to never renew files, default: 2592000 = 30 days)
 
 Defaults may be changed by setting environmental variables when running goggle.
 
@@ -40,11 +40,12 @@ Changes defaults and sets some other elements:
 * `GOGGLER_QUALITY` Set default image quality
 * `GOGGLER_WAIT` Set default wait time
 * `GOGGLER_TIMEOUT` Set default timeout time
+* `GOGGLER_MAXAGE` Set the default maxage time
 * `GOGGLER_MAXAGE` Set default max age time
 * `GOGGLER_LISTEN` Set default listen address (default: `:8080`)
 * `GOGGLER_DEBUG` Enable debugging log
 * `GOGGLER_CACHE` Type of cache (`local` or `s3`, default `local`)
-* `GOGGLER_CACHE_LOCAL_PATH` Path to local cache (default: OS specific temp dir like `/tmp`)
+* `GOGGLER_CACHE_LOCAL_PATH` Path to local cache (default: OS specific temp dir like `/tmp/goggler`)
 
 Example:
 

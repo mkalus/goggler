@@ -14,10 +14,23 @@ type LocalCache struct {
 	path  string
 }
 
+// return file path for a certain hash value
+func (c LocalCache) getPathForHash(hash string) string {
+	return filepath.Join(c.path, hash[0:1], hash[1:2], hash[2:3])
+}
+
 // save to cache
 func (c LocalCache) Save(hash string, data []byte) error {
-	// Create file path
-	file := filepath.Join(c.path, hash+".png")
+	// Get file path
+	path := c.getPathForHash(hash)
+
+	// check path existence and create if if needed
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		os.MkdirAll(path, 0775)
+	}
+
+	file := filepath.Join(path, hash+".png")
 
 	if c.debug {
 		log.Printf("Writing data to %s", file)
@@ -50,7 +63,7 @@ func (c LocalCache) Save(hash string, data []byte) error {
 // get file from cache
 func (c LocalCache) Get(hash string, maxAge int) ([]byte, error) {
 	// Create file path
-	file := filepath.Join(c.path, hash+".png")
+	file := filepath.Join(c.getPathForHash(hash), hash+".png")
 
 	// Check file existence
 	stat, err := os.Stat(file)
@@ -64,10 +77,8 @@ func (c LocalCache) Get(hash string, maxAge int) ([]byte, error) {
 			log.Printf("Stale file %s - renewing", file)
 		}
 
-		err = c.Delete(hash)
-		if err != nil {
-			return nil, err
-		}
+		// ignore errors here
+		_ = c.Delete(hash)
 
 		return nil, nil
 	}
@@ -90,8 +101,11 @@ func (c LocalCache) Get(hash string, maxAge int) ([]byte, error) {
 
 // delete file in cache
 func (c LocalCache) Delete(hash string) error {
-	// TODO
-	return nil
+	// Create file path
+	file := filepath.Join(c.getPathForHash(hash), hash+".png")
+
+	// try to delete file
+	return os.Remove(file)
 }
 
 // init local cache and populate with data
@@ -111,7 +125,7 @@ func InitLocalCache(path string, debug bool) (*LocalCache, error) {
 	}
 
 	// try to create path
-	if err := os.MkdirAll(filepath.Dir(fp), 0775); err != nil {
+	if err := os.MkdirAll(fp, 0775); err != nil {
 		return nil, err
 	}
 

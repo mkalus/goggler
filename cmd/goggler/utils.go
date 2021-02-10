@@ -6,6 +6,7 @@ import (
 	"github.com/mkalus/goggler/screenshot"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -68,7 +69,7 @@ func defineSettingsFromEnvironment() {
 		// fallback to local cache
 		p := os.Getenv("GOGGLER_CACHE_LOCAL_PATH")
 		if p == "" {
-			p = os.TempDir()
+			p = filepath.Join(os.TempDir(), "goggler")
 		}
 		MyCache, err = local.InitLocalCache(p, Debug)
 		if err != nil {
