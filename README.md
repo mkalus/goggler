@@ -62,9 +62,13 @@ GOGGLER_DEBUG=1 GOGGLER_LISTEN=127.0.0.1:9090 ./goggler
 # Local storage
 GOGGLER_CACHE_LOCAL_PATH=~/mydata ./goggler
 # S3 storage
-GOGGLER_DEBUG=1 GOGGLER_CACHE=s3 GOGGLER_CACHE_S3_BUCKETNAME=mytestbucket GOGGLER_CACHE_S3_ACCESSKEY=_KEY_ GOGGLER_CACHE_S3_SECRETKEY=_KEY_ ./goggler
+GOGGLER_DEBUG=1 GOGGLER_CACHE=s3 GOGGLER_CACHE_S3_BUCKETNAME=mytestbucket \
+  GOGGLER_CACHE_S3_ACCESSKEY=_KEY_ GOGGLER_CACHE_S3_SECRETKEY=_KEY_ ./goggler
 # Minio storage
-GOGGLER_DEBUG=1 GOGGLER_CACHE=s3 GOGGLER_CACHE_S3_URL=127.0.0.1:9000 GOGGLER_CACHE_S3_BUCKETNAME=test GOGGLER_CACHE_S3_ACCESSKEY=minioadmin GOGGLER_CACHE_S3_SECRETKEY=minioadmin GOGGLER_CACHE_S3_SKIPSSL=1 GOGGLER_CACHE_S3_CREATEBUCKET=1 ./goggler
+GOGGLER_DEBUG=1 GOGGLER_CACHE=s3 GOGGLER_CACHE_S3_URL=127.0.0.1:9000 \
+  GOGGLER_CACHE_S3_BUCKETNAME=test GOGGLER_CACHE_S3_ACCESSKEY=minioadmin \
+  GOGGLER_CACHE_S3_SECRETKEY=minioadmin GOGGLER_CACHE_S3_SKIPSSL=1 \
+  GOGGLER_CACHE_S3_CREATEBUCKET=1 ./goggler
 ```
 
 ## Docker
@@ -73,6 +77,23 @@ There is a Docker container of goggler including a headless version of Chromium.
 
 ```bash
 docker run --rm -p8080:8080 ronix/goggler
+```
+
+Full example with persistent volume:
+
+```bash
+docker run -d -p8080:8080 -v /tmp/googler:/tmp/googler \
+  --name googler ronix/goggler
+```
+
+Full example with S3 storage:
+
+```bash
+docker run -d -p8080:8080 --name googler -e "GOGGLER_CACHE=s3" \
+  -e "GOGGLER_CACHE_S3_BUCKETNAME=mytestbucket" \
+  -e "GOGGLER_CACHE_S3_ACCESSKEY=_KEY_" \
+  -e "GOGGLER_CACHE_S3_SECRETKEY=_KEY_" \
+  ronix/goggler
 ```
 
 Building Docker image from this source:
