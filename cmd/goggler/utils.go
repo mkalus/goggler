@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 )
 
 // keeps default settings
@@ -50,13 +51,14 @@ func defineSettingsFromEnvironment() {
 	}
 
 	if Debug {
-		log.Printf("Default settings: width=%dpx, height=%dpx, quality=%d, scale=%f, wait=%dms, timeout=%dms",
+		log.Printf("Default settings: width=%dpx, height=%dpx, quality=%d, scale=%f, wait=%dms, timeout=%dms, maxage=%ds",
 			defaultSettings.Width,
 			defaultSettings.Height,
 			defaultSettings.Quality,
 			defaultSettings.Scale,
 			defaultSettings.Wait,
 			defaultSettings.Timeout,
+			defaultSettings.MaxAge,
 		)
 	}
 
@@ -81,7 +83,19 @@ func defineSettingsFromEnvironment() {
 		}
 	}
 
-	// TODO: start cache cleaning, max age, etc.
+	// get interval for cleanup runner
+	if defaultSettings.MaxAge > 0 {
+		i := getPositiveIntegerFromString(os.Getenv("GOGGLER_CACHE_CLEANUP_INTERVAL"), 2592000, "GOGGLER_CACHE_CLEANUP_INTERVAL", true)
+		if i > 0 {
+			if Debug {
+				log.Printf("Cache cleanup: every %s", time.Duration(i)*time.Second)
+			}
+
+			for range time.Tick(time.Duration(i) * time.Second) {
+				MyCache.RunCleanUp(defaultSettings.MaxAge)
+			}
+		}
+	}
 }
 
 // helper function to parse query string values to positive int

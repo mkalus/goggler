@@ -45,6 +45,7 @@ Changes defaults and sets some other elements:
 * `GOGGLER_LISTEN` Set default listen address (default: `:8080`)
 * `GOGGLER_DEBUG` Enable debugging log
 * `GOGGLER_CACHE` Type of cache (`local` or `s3`, default `local`)
+* `GOGGLER_CACHE_CLEANUP_INTERVAL` Interval in seconds at which cleanup service is run to clean stale data (maxage has to be greater than 0, also: set to 0 to never clean up old files, default: 2592000 = 30 days)
 * `GOGGLER_CACHE_LOCAL_PATH` Path to local cache (default: OS specific temp dir like `/tmp/goggler`)
 
 Example:

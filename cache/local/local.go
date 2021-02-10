@@ -27,7 +27,10 @@ func (c LocalCache) Save(hash string, data []byte) error {
 	// check path existence and create if if needed
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
-		os.MkdirAll(path, 0775)
+		err = os.MkdirAll(path, 0775)
+		if err != nil {
+			return err
+		}
 	}
 
 	file := filepath.Join(path, hash+".png")
@@ -106,6 +109,38 @@ func (c LocalCache) Delete(hash string) error {
 
 	// try to delete file
 	return os.Remove(file)
+}
+
+// run cleanup service
+func (c LocalCache) RunCleanUp(maxAge int) {
+	// sanity check
+	if maxAge <= 0 {
+		return
+	}
+
+	if c.debug {
+		log.Print("Cleanup service started...")
+	}
+
+	// walk file path and look for stale files
+	_ = filepath.Walk(c.path, func(path string, stat os.FileInfo, err error) error {
+		if err != nil {
+			log.Printf("Cleanup error: %s", err)
+		} else if !stat.IsDir() && time.Duration(maxAge)*time.Second < time.Now().Sub(stat.ModTime()) {
+			err := os.Remove(path)
+			if err != nil {
+				log.Printf("Cleanup error while deleting %s: %s", stat.Name(), err)
+			} else if c.debug {
+				log.Printf("Cleanup of stale file %s", stat.Name())
+			}
+		}
+
+		return nil
+	})
+
+	if c.debug {
+		log.Print("Cleanup service finished.")
+	}
 }
 
 // init local cache and populate with data
