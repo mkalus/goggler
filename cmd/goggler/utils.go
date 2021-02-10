@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/mkalus/goggler/cache"
 	"github.com/mkalus/goggler/cache/local"
+	"github.com/mkalus/goggler/cache/sthree"
 	"github.com/mkalus/goggler/screenshot"
 	"log"
 	"os"
@@ -66,7 +67,37 @@ func defineSettingsFromEnvironment() {
 	c := os.Getenv("GOGGLER_CACHE")
 	var err error
 	switch c {
-	// TODO: add more caches
+	case "s3", "S3":
+		// implement S3 cache
+		url := os.Getenv("GOGGLER_CACHE_S3_URL")
+		if url == "" {
+			url = "s3.amazonaws.com"
+		}
+		bucket := os.Getenv("GOGGLER_CACHE_S3_BUCKETNAME")
+		accessKey := os.Getenv("GOGGLER_CACHE_S3_ACCESSKEY")
+		secretKey := os.Getenv("GOGGLER_CACHE_S3_SECRETKEY")
+		region := os.Getenv("GOGGLER_CACHE_S3_REGION")
+		ssl := true
+		if os.Getenv("GOGGLER_CACHE_S3_SKIPSSL") != "" {
+			ssl = false
+		}
+		createBucket := false
+		if os.Getenv("GOGGLER_CACHE_S3_CREATEBUCKET") != "" {
+			createBucket = true
+		}
+
+		// expiration to days
+		days := defaultSettings.MaxAge / 86400
+
+		MyCache, err = sthree.InitS3Cache(url, region, bucket, accessKey, secretKey, days, ssl, createBucket, Debug)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// access and secret keys are skipped
+		if Debug {
+			log.Printf("Cache: s3, url= %s, region=%s, bucket=%s, ssl=%t, expire=%dd", url, region, bucket, ssl, days)
+		}
 	default:
 		// fallback to local cache
 		p := os.Getenv("GOGGLER_CACHE_LOCAL_PATH")
@@ -84,18 +115,20 @@ func defineSettingsFromEnvironment() {
 	}
 
 	// get interval for cleanup runner
-	if defaultSettings.MaxAge > 0 {
-		i := getPositiveIntegerFromString(os.Getenv("GOGGLER_CACHE_CLEANUP_INTERVAL"), 2592000, "GOGGLER_CACHE_CLEANUP_INTERVAL", true)
-		if i > 0 {
-			if Debug {
-				log.Printf("Cache cleanup: every %s", time.Duration(i)*time.Second)
-			}
+	go func() {
+		if defaultSettings.MaxAge > 0 {
+			i := getPositiveIntegerFromString(os.Getenv("GOGGLER_CACHE_CLEANUP_INTERVAL"), 2592000, "GOGGLER_CACHE_CLEANUP_INTERVAL", true)
+			if i > 0 {
+				if Debug {
+					log.Printf("Cache cleanup: every %s", time.Duration(i)*time.Second)
+				}
 
-			for range time.Tick(time.Duration(i) * time.Second) {
-				MyCache.RunCleanUp(defaultSettings.MaxAge)
+				for range time.Tick(time.Duration(i) * time.Second) {
+					MyCache.RunCleanUp(defaultSettings.MaxAge)
+				}
 			}
 		}
-	}
+	}()
 }
 
 // helper function to parse query string values to positive int

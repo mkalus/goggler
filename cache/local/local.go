@@ -81,7 +81,7 @@ func (c LocalCache) Get(hash string, maxAge int) ([]byte, error) {
 		}
 
 		// ignore errors here
-		_ = c.Delete(hash)
+		_ = c.delete(hash)
 
 		return nil, nil
 	}
@@ -103,7 +103,7 @@ func (c LocalCache) Get(hash string, maxAge int) ([]byte, error) {
 }
 
 // delete file in cache
-func (c LocalCache) Delete(hash string) error {
+func (c LocalCache) delete(hash string) error {
 	// Create file path
 	file := filepath.Join(c.getPathForHash(hash), hash+".png")
 

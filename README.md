@@ -40,18 +40,31 @@ Changes defaults and sets some other elements:
 * `GOGGLER_QUALITY` Set default image quality
 * `GOGGLER_WAIT` Set default wait time
 * `GOGGLER_TIMEOUT` Set default timeout time
-* `GOGGLER_MAXAGE` Set the default maxage time
 * `GOGGLER_MAXAGE` Set default max age time
 * `GOGGLER_LISTEN` Set default listen address (default: `:8080`)
 * `GOGGLER_DEBUG` Enable debugging log
 * `GOGGLER_CACHE` Type of cache (`local` or `s3`, default `local`)
-* `GOGGLER_CACHE_CLEANUP_INTERVAL` Interval in seconds at which cleanup service is run to clean stale data (maxage has to be greater than 0, also: set to 0 to never clean up old files, default: 2592000 = 30 days)
+* `GOGGLER_CACHE_CLEANUP_INTERVAL` Interval in seconds at which cleanup service is run to clean stale data (maxage has to be greater than 0, also: set to 0 to never clean up old files, s3 needs full days to work properly, default: 2592000 = 30 days)
 * `GOGGLER_CACHE_LOCAL_PATH` Path to local cache (default: OS specific temp dir like `/tmp/goggler`)
+* `GOGGLER_CACHE_S3_URL` Endpoint for S3 storage (e.g. `s3.amazonaws.com`)
+* `GOGGLER_CACHE_S3_BUCKETNAME` Bucket name
+* `GOGGLER_CACHE_S3_ACCESSKEY` Access Key ID for S3 storage
+* `GOGGLER_CACHE_S3_SECRETKEY` Secret Access Key ID for S3 storage
+* `GOGGLER_CACHE_S3_REGION` S3 region (might be skipped in Amazon, e.g. `us-east-1`)
+* `GOGGLER_CACHE_S3_SKIPSSL` Set to any value to skip secure SSL/TLS connection
+* `GOGGLER_CACHE_S3_CREATEBUCKET` Set to any value to create bucket if it does not exist
 
-Example:
+Examples:
 
 ```bash
+# Basic test
 GOGGLER_DEBUG=1 GOGGLER_LISTEN=127.0.0.1:9090 ./goggler
+# Local storage
+GOGGLER_CACHE_LOCAL_PATH=~/mydata ./goggler
+# S3 storage
+GOGGLER_DEBUG=1 GOGGLER_CACHE=s3 GOGGLER_CACHE_S3_BUCKETNAME=mytestbucket GOGGLER_CACHE_S3_ACCESSKEY=_KEY_ GOGGLER_CACHE_S3_SECRETKEY=_KEY_ ./goggler
+# Minio storage
+GOGGLER_DEBUG=1 GOGGLER_CACHE=s3 GOGGLER_CACHE_S3_URL=127.0.0.1:9000 GOGGLER_CACHE_S3_BUCKETNAME=test GOGGLER_CACHE_S3_ACCESSKEY=minioadmin GOGGLER_CACHE_S3_SECRETKEY=minioadmin GOGGLER_CACHE_S3_SKIPSSL=1 GOGGLER_CACHE_S3_CREATEBUCKET=1 ./goggler
 ```
 
 ## Docker
