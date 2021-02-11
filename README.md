@@ -12,7 +12,7 @@ go build github.com/mkalus/goggler/cmd/goggler && GOGGLER_DEBUG=1 ./goggler
 
 Point your Browser to the URL: `http://localhost:8080/?url=https%3A%2F%2Fduckduckgo.com%2F&wait=2000`
 
-**Note:** Googler uses ChromeDP and needs Chrome or Chromium to work. This means it has to be able to
+**Note:** Goggler uses ChromeDP and needs Chrome or Chromium to work. This means it has to be able to
 access and start Chrome or Chromium somehow (Chrome in path variable or the like).
 
 ## Parameters
@@ -83,14 +83,14 @@ docker run --rm -p8080:8080 ronix/goggler
 Full example with persistent volume:
 
 ```bash
-docker run -d -p8080:8080 -v /tmp/googler:/tmp/googler \
-  --name googler ronix/goggler
+docker run -d -p8080:8080 -v /tmp/goggler:/tmp/goggler \
+  --name goggler ronix/goggler
 ```
 
 Full example with S3 storage:
 
 ```bash
-docker run -d -p8080:8080 --name googler -e "GOGGLER_CACHE=s3" \
+docker run -d -p8080:8080 --name goggler -e "GOGGLER_CACHE=s3" \
   -e "GOGGLER_CACHE_S3_BUCKETNAME=mytestbucket" \
   -e "GOGGLER_CACHE_S3_ACCESSKEY=_KEY_" \
   -e "GOGGLER_CACHE_S3_SECRETKEY=_KEY_" \
@@ -100,5 +100,5 @@ docker run -d -p8080:8080 --name googler -e "GOGGLER_CACHE=s3" \
 Building Docker image from this source:
 
 ```bash
-docker build -t googler .
+docker build -t goggler .
 ```
