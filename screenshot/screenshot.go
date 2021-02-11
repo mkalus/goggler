@@ -20,6 +20,7 @@ type Settings struct {
 	Quality int     // png quality
 	Hash    string  // file hash for this setting to quickly find cached files
 	MaxAge  int     // maximum age of cache file in seconds (!) before it gets reloaded (set to 0 to never renew files, default 2592000 = 30 days)
+	Force   bool    // force update
 }
 
 // entry point to create screenshot

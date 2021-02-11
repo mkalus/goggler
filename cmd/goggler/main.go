@@ -47,18 +47,19 @@ func main() {
 			return
 		}
 
-		// get existing file
-		data, err := MyCache.Get(settings.Hash, settings.MaxAge)
-		if err == nil && data != nil && len(data) > 0 {
-			// get time passed
-			duration := time.Since(start)
+		// get existing file, unless update is forced
+		if !settings.Force {
+			if data, err := MyCache.Get(settings.Hash, settings.MaxAge); err == nil && data != nil && len(data) > 0 {
+				// get time passed
+				duration := time.Since(start)
 
-			// return image
-			log.Printf("200: HIT %s %s", duration, settings.Url)
-			w.Header().Set("Content-Type", "image/png")
-			_, _ = w.Write(data)
+				// return image
+				log.Printf("200: HIT %s %s", duration, settings.Url)
+				w.Header().Set("Content-Type", "image/png")
+				_, _ = w.Write(data)
 
-			return
+				return
+			}
 		}
 
 		// create screenshot and return it
@@ -116,6 +117,11 @@ func parseQuery(r *url.URL) screenshot.Settings {
 		Wait:    getPositiveIntegerFromString(q.Get("wait"), defaultSettings.Wait, "wait", false),
 		Timeout: getPositiveIntegerFromString(q.Get("timeout"), defaultSettings.Timeout, "timeout", false),
 		MaxAge:  getPositiveIntegerFromString(q.Get("maxage"), defaultSettings.MaxAge, "maxage", true),
+	}
+
+	// force update?
+	if q.Get("force") != "" {
+		settings.Force = true
 	}
 
 	// create file hash
