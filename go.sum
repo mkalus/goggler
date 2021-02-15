@@ -2,6 +2,8 @@ github.com/cheggaaa/pb v1.0.29/go.mod h1:W40334L7FMC5JKWldsTWbdGjLo0RxUKK73K+TuP
 github.com/chromedp/cdproto v0.0.0-20210122124816-7a656c010d57/go.mod h1:55pim6Ht4LJKdVLlyFJV/g++HsEA1hQxPbB5JyNdZC0=
 github.com/chromedp/cdproto v0.0.0-20210208055300-32adaa8323b6 h1:0sVL9xPrMaBjSTc7KWSBQty4QeJ3VJyEaJS+GNXui+M=
 github.com/chromedp/cdproto v0.0.0-20210208055300-32adaa8323b6/go.mod h1:55pim6Ht4LJKdVLlyFJV/g++HsEA1hQxPbB5JyNdZC0=
+github.com/chromedp/cdproto v0.0.0-20210211211551-bf465a41a1f9 h1:UgQoDQCE6AAsthd+09vCUgR+ysDzkqGlG4SRLIfSrA8=
+github.com/chromedp/cdproto v0.0.0-20210211211551-bf465a41a1f9/go.mod h1:55pim6Ht4LJKdVLlyFJV/g++HsEA1hQxPbB5JyNdZC0=
 github.com/chromedp/chromedp v0.6.5 h1:hPaDYBpvD2WFicln0ByzV+XRhSOtLgAgsu39O455iWY=
 github.com/chromedp/chromedp v0.6.5/go.mod h1:/Q6h52DkrFuvOgmCuR6O3xT5g0bZYoPqjANKBEvQGEY=
 github.com/chromedp/sysutil v1.0.0 h1:+ZxhTpfpZlmchB58ih/LBHX52ky7w2VhQVKQMucy3Ic=
