@@ -2,6 +2,12 @@ package screenshot
 
 import (
 	"context"
+	"github.com/mitchellh/go-ps"
+	"log"
+	"os"
+	"os/exec"
+	"strconv"
+	"sync"
 	"time"
 
 	"github.com/chromedp/cdproto/emulation"
@@ -25,6 +31,16 @@ type Settings struct {
 
 // entry point to create screenshot
 func CreateScreenShot(settings Settings) ([]byte, error) {
+	mu.Lock()
+	screenshotCounter++
+	mustClean = true
+	mu.Unlock()
+	defer func() {
+		mu.Lock()
+		screenshotCounter--
+		mu.Unlock()
+	}()
+
 	// create context with timeout
 	timeoutCtx, timeoutCancel := context.WithTimeout(context.Background(), time.Duration(settings.Timeout)*time.Millisecond)
 	defer timeoutCancel()
@@ -72,4 +88,39 @@ func runCreateScreenShot(settings Settings, res *[]byte) chromedp.Tasks {
 			return nil
 		}),
 	}
+}
+
+// try to kill dangling zombie processes in Chromium
+var (
+	screenshotCounter uint       // counts processes currently active
+	mustClean         bool       // timer must clean processes
+	mu                sync.Mutex // guards variables
+)
+
+func init() {
+	go func() {
+		for range time.Tick(30 * time.Second) {
+			mu.Lock()
+			// must be cleaned and no screenshot processes running any more
+			if mustClean && screenshotCounter == 0 {
+				mustClean = false // reset
+
+				// find all processes
+				procs, err := ps.Processes()
+				if err != nil {
+					log.Printf("Could not load progress list: %s", err)
+					return
+				}
+
+				for _, proc := range procs {
+					if proc.PPid() == os.Getpid() { // if descendants
+						if _, err := exec.Command("kill", "-9", strconv.Itoa(proc.Pid())).Output(); err != nil {
+							log.Println("[warn] Failed to kill Chromium processes", err)
+						}
+					}
+				}
+			}
+			mu.Unlock()
+		}
+	}()
 }
