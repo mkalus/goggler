@@ -10,3 +10,12 @@ COPY --from=build /go/src/github.com/mkalus/goggler/goggler /opt/google/chrome/g
 EXPOSE 8080
 VOLUME /tmp/goggler
 ENTRYPOINT ["/opt/google/chrome/goggler"]
+
+# Alternatively, we could run the container like this:
+#FROM demisto/chromium:1.0.0.16237
+#RUN rm /etc/apt/sources.list.d/google-chrome.list && apt update --allow-unauthenticated && apt install -y dumb-init
+#COPY --from=build /go/src/github.com/mkalus/goggler/goggler /opt/google/chrome/goggler
+#EXPOSE 8080
+#VOLUME /tmp/goggler
+#ENTRYPOINT ["dumb-init", "--"]
+#CMD ["/opt/google/chrome/goggler"]

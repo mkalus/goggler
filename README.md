@@ -77,14 +77,16 @@ GOGGLER_DEBUG=1 GOGGLER_CACHE=s3 GOGGLER_CACHE_S3_URL=127.0.0.1:9000 \
 There is a Docker container of goggler including a headless version of Chromium. Try it using:
 
 ```bash
-docker run --rm -p8080:8080 ronix/goggler
+docker run --rm -p8080:8080 --init ronix/goggler
 ```
+
+**Important:** The `--init` option is needed to get rid of zombie processes that will spawn if you run the container.
 
 Full example with persistent volume:
 
 ```bash
 docker run -d -p8080:8080 -v /tmp/goggler:/tmp/goggler \
-  --name goggler ronix/goggler
+  --name goggler --init ronix/goggler
 ```
 
 Full example with S3 storage:
@@ -94,7 +96,7 @@ docker run -d -p8080:8080 --name goggler -e "GOGGLER_CACHE=s3" \
   -e "GOGGLER_CACHE_S3_BUCKETNAME=mytestbucket" \
   -e "GOGGLER_CACHE_S3_ACCESSKEY=_KEY_" \
   -e "GOGGLER_CACHE_S3_SECRETKEY=_KEY_" \
-  ronix/goggler
+  --init ronix/goggler
 ```
 
 Building Docker image from this source:
