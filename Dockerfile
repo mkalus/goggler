@@ -1,5 +1,5 @@
 # Build image
-FROM golang:1.16-alpine AS build
+FROM golang:1.18-alpine AS build
 WORKDIR /go/src/
 COPY . github.com/mkalus/goggler
 RUN cd github.com/mkalus/goggler && CGO_ENABLED=0 go build github.com/mkalus/goggler/cmd/goggler
