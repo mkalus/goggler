@@ -1,6 +1,6 @@
 module github.com/mkalus/goggler
 
-go 1.19
+go 1.20
 
 require (
 	github.com/chromedp/cdproto v0.0.0-20230203223129-bb3b7fef2b77

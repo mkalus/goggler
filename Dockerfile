@@ -1,5 +1,5 @@
 # Build image
-FROM docker.io/golang:1.19-alpine AS build
+FROM docker.io/golang:1.20-alpine AS build
 WORKDIR /go/src/
 COPY . github.com/mkalus/goggler
 RUN cd github.com/mkalus/goggler && CGO_ENABLED=0 go build github.com/mkalus/goggler/cmd/goggler
