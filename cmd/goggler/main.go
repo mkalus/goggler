@@ -109,14 +109,15 @@ func parseQuery(r *url.URL) screenshot.Settings {
 	q := r.Query()
 
 	settings := screenshot.Settings{
-		Url:     q.Get("url"),
-		Width:   getPositiveIntegerFromString(q.Get("width"), defaultSettings.Width, "width", false),
-		Height:  getPositiveIntegerFromString(q.Get("height"), defaultSettings.Height, "height", false),
-		Quality: getPositiveIntegerFromString(q.Get("quality"), defaultSettings.Quality, "quality", false),
-		Scale:   getPositiveFloatFromString(q.Get("scale"), defaultSettings.Scale, "scale"),
-		Wait:    getPositiveIntegerFromString(q.Get("wait"), defaultSettings.Wait, "wait", false),
-		Timeout: getPositiveIntegerFromString(q.Get("timeout"), defaultSettings.Timeout, "timeout", false),
-		MaxAge:  getPositiveIntegerFromString(q.Get("maxage"), defaultSettings.MaxAge, "maxage", true),
+		Url:         q.Get("url"),
+		Width:       getPositiveIntegerFromString(q.Get("width"), defaultSettings.Width, "width", false),
+		Height:      getPositiveIntegerFromString(q.Get("height"), defaultSettings.Height, "height", false),
+		Quality:     getPositiveIntegerFromString(q.Get("quality"), defaultSettings.Quality, "quality", false),
+		Scale:       getPositiveFloatFromString(q.Get("scale"), defaultSettings.Scale, "scale"),
+		Wait:        getPositiveIntegerFromString(q.Get("wait"), defaultSettings.Wait, "wait", false),
+		Timeout:     getPositiveIntegerFromString(q.Get("timeout"), defaultSettings.Timeout, "timeout", false),
+		MaxAge:      getPositiveIntegerFromString(q.Get("maxage"), defaultSettings.MaxAge, "maxage", true),
+		WaitForIdle: getBoolFromString(q.Get("waitforidle"), defaultSettings.WaitForIdle, "waitforidle"),
 	}
 
 	// force update?

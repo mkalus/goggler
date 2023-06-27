@@ -40,14 +40,13 @@ func defineSettingsFromEnvironment() {
 	defaultSettings.Timeout = getPositiveIntegerFromString(os.Getenv("GOGGLER_TIMEOUT"), defaultSettings.Timeout, "GOGGLER_TIMEOUT", false)
 	defaultSettings.Quality = getPositiveIntegerFromString(os.Getenv("GOGGLER_QUALITY"), defaultSettings.Quality, "GOGGLER_QUALITY", false)
 	defaultSettings.MaxAge = getPositiveIntegerFromString(os.Getenv("GOGGLER_MAXAGE"), defaultSettings.MaxAge, "GOGGLER_MAXAGE", true)
+	defaultSettings.WaitForIdle = getBoolFromString(os.Getenv("GOGGLER_WAIT_FOR_IDLE"), false, "GOGGLER_WAIT_FOR_IDLE")
 
-	a := os.Getenv("GOGGLER_LISTEN")
-	if a != "" {
+	if a := os.Getenv("GOGGLER_LISTEN"); a != "" {
 		listenAddress = a
 	}
 
-	d := os.Getenv("GOGGLER_DEBUG")
-	if d != "" {
+	if d := os.Getenv("GOGGLER_DEBUG"); d != "" {
 		Debug = true
 	}
 
@@ -89,8 +88,7 @@ func defineSettingsFromEnvironment() {
 		// expiration to days
 		days := defaultSettings.MaxAge / 86400
 
-		MyCache, err = sthree.InitS3Cache(url, region, bucket, accessKey, secretKey, days, ssl, createBucket, Debug)
-		if err != nil {
+		if MyCache, err = sthree.InitS3Cache(url, region, bucket, accessKey, secretKey, days, ssl, createBucket, Debug); err != nil {
 			log.Fatal(err)
 		}
 
@@ -157,6 +155,21 @@ func getPositiveFloatFromString(n string, defaultValue float64, fieldName string
 	i, err := strconv.ParseFloat(n, 64)
 	if err != nil || i <= 0 {
 		log.Printf("can't convert field %s (value %s) - not a positive float (falling back to default value)", fieldName, n)
+		return defaultValue
+	}
+
+	return i
+}
+
+func getBoolFromString(n string, defaultValue bool, fieldName string) bool {
+	// empty value? return default
+	if n == "" {
+		return defaultValue
+	}
+
+	i, err := strconv.ParseBool(n)
+	if err != nil || i == false {
+		log.Printf("can't convert field %s (value %s) - not a boolean (falling back to default value)", fieldName, n)
 		return defaultValue
 	}
 

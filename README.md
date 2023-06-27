@@ -39,11 +39,12 @@ Changes defaults and sets some other elements:
 * `GOGGLER_HEIGHT` Set default image height
 * `GOGGLER_SCALE` Set default image scale
 * `GOGGLER_QUALITY` Set default image quality
-* `GOGGLER_WAIT` Set default wait time
-* `GOGGLER_TIMEOUT` Set default timeout time
-* `GOGGLER_MAXAGE` Set default max age time
+* `GOGGLER_WAIT_FOR_IDLE` Wait for network idle in browser (default: `false`, set to any value to enable)
+* `GOGGLER_WAIT` Set default wait time (ms) before rendering (default: `2000` aka 2 seconds)
+* `GOGGLER_TIMEOUT` Set default timeout (ms) time (default: `60000` aka 60 seconds)
+* `GOGGLER_MAXAGE` Set default max age (s) time (default: `2592000` aka 30 days)
 * `GOGGLER_LISTEN` Set default listen address (default: `:8080`)
-* `GOGGLER_DEBUG` Enable debugging log
+* `GOGGLER_DEBUG` Enable debugging log (default: `false`, set to any value to enable)
 * `GOGGLER_CACHE` Type of cache (`local` or `s3`, default `local`)
 * `GOGGLER_CACHE_CLEANUP_INTERVAL` Interval in seconds at which cleanup service is run to clean stale data (maxage has to be greater than 0, also: set to 0 to never clean up old files, s3 needs full days to work properly, default: 2592000 = 30 days)
 * `GOGGLER_CACHE_LOCAL_PATH` Path to local cache (default: OS specific temp dir like `/tmp/goggler`)
@@ -62,6 +63,8 @@ Examples:
 GOGGLER_DEBUG=1 GOGGLER_LISTEN=127.0.0.1:9090 ./goggler
 # Local storage
 GOGGLER_CACHE_LOCAL_PATH=~/mydata ./goggler
+# Waiting for network idle instead of fixed amount of time
+GOGGLER_CACHE_LOCAL_PATH=~/mydata GOGGLER_WAIT_FOR_IDLE=1 ./goggler
 # S3 storage
 GOGGLER_DEBUG=1 GOGGLER_CACHE=s3 GOGGLER_CACHE_S3_BUCKETNAME=mytestbucket \
   GOGGLER_CACHE_S3_ACCESSKEY=_KEY_ GOGGLER_CACHE_S3_SECRETKEY=_KEY_ ./goggler
@@ -81,6 +84,8 @@ docker run --rm -p8080:8080 --init ronix/goggler
 ```
 
 **Important:** The `--init` option is needed to get rid of zombie processes that will spawn if you run the container.
+This is due Chrome creating new processes within the container. I have not found a way to tackle this, but since it is
+more a feature than a bug, I assume we can live with this.
 
 Full example with persistent volume:
 
