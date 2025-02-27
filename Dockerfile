@@ -5,7 +5,7 @@ COPY . github.com/mkalus/goggler
 RUN cd github.com/mkalus/goggler && CGO_ENABLED=0 go build github.com/mkalus/goggler/cmd/goggler
 
 # Actual image containing headless chromium browser
-FROM docker.io/demisto/chromium:126.0.6478.103218
+FROM docker.io/demisto/chromium:131.0.6778.117810
 COPY --from=build /go/src/github.com/mkalus/goggler/goggler /opt/google/chrome/goggler
 EXPOSE 8080
 VOLUME /tmp/goggler
