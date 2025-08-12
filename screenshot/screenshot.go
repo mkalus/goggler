@@ -61,7 +61,7 @@ func runCreateScreenShot(settings Settings, res *[]byte) chromedp.Tasks {
 
 // createScreenShot is the function that will create screenshots - saved into res as bytes
 func createScreenShot(settings Settings, res *[]byte) chromedp.ActionFunc {
-	return chromedp.ActionFunc(func(ctx context.Context) error {
+	return func(ctx context.Context) error {
 		// force viewport emulation
 		err := emulation.SetDeviceMetricsOverride(int64(settings.Width), int64(settings.Height), 1, false).
 			WithScreenOrientation(&emulation.ScreenOrientation{
@@ -87,7 +87,7 @@ func createScreenShot(settings Settings, res *[]byte) chromedp.ActionFunc {
 			return err
 		}
 		return nil
-	})
+	}
 }
 
 // taken from https://github.com/chromedp/chromedp/issues/431 - thanks go to https://github.com/wietsevenema
