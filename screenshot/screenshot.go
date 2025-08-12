@@ -93,7 +93,7 @@ func createScreenShot(settings Settings, res *[]byte) chromedp.ActionFunc {
 // taken from https://github.com/chromedp/chromedp/issues/431 - thanks go to https://github.com/wietsevenema
 func navigateAndWaitFor(url string, eventName string) chromedp.ActionFunc {
 	return func(ctx context.Context) error {
-		_, _, _, err := page.Navigate(url).Do(ctx)
+		_, _, _, _, err := page.Navigate(url).Do(ctx)
 		if err != nil {
 			return err
 		}
